@@ -281,9 +281,9 @@ export default function App() {
 
   return (
     <div className={styles.container}>
-      <audio ref={ostRef} src="/assets/ost.mp3" />
-      <audio ref={deathRef} src="/assets/death.mp3" />
-      <audio ref={dangerRef} src="/assets/danger.mp3" />
+      <audio ref={ostRef} src="ost.mp3" />
+      <audio ref={deathRef} src="death.mp3" />
+      <audio ref={dangerRef} src="danger.mp3" />
 
       {gameState === "loading" && (
         <div className={styles.countdownText} style={{ userSelect: "none" }}></div>
@@ -293,10 +293,10 @@ export default function App() {
         <div className={gameState === "menu" ? styles.menu : styles.retryMenu}>
          {gameState === "gameover" && <div className={styles.retryText}>You cannot give up just yet...</div>}
 
-          <img src="/assets/start.png" alt="Start Image" className={styles.startImage} />
+          <img src="start.png" alt="Start Image" className={styles.startImage} />
 
           <button onClick={startFight} className={styles.menuButton}>
-            <img src="/assets/heart.png" alt="Heart" className={styles.menuHeart} />
+            <img src="heart.png" alt="Heart" className={styles.menuHeart} />
             Start
           </button>
         </div>
@@ -304,7 +304,7 @@ export default function App() {
 
       {(gameState === "fight" || gameState === "countdown") && (
         <div className={styles.gameWrapper}>
-          <img src="/assets/asgore.gif" alt="Asgore" className={styles.asgore} />
+          <img src="asgore.gif" alt="Asgore" className={styles.asgore} />
           <div className={styles.phraseBox}>
             <p className={styles.phrase}>{phrases[phraseIndex]}</p>
           </div>
@@ -332,7 +332,7 @@ export default function App() {
               </>
             )}
             <img
-              src="/assets/heart.png"
+              src="heart.png"
               alt="Heart"
               className={styles.heart}
               style={{ top: position.y, left: position.x }}
@@ -340,7 +340,7 @@ export default function App() {
             {flames.map((flame) => (
               <img
                 key={flame.id}
-                src="/assets/flames.png"
+                src="flames.png"
                 alt="Flame"
                 className={styles.flame}
                 style={{ top: flame.y, left: flame.x }}
