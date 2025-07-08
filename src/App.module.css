@@ -1,0 +1,187 @@
+
+.container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background-color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  user-select: none;
+  margin: 0;
+  padding: 0;
+}
+
+.startImage {
+  width: 400px; 
+  display: block;
+  margin: 0 auto 20px;
+}
+
+.gameWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.asgore {
+  margin-top: 4rem;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+  border: 2px solid white;
+}
+
+.box {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  border: 2px solid white;
+  overflow: hidden;
+}
+
+.menuHeart {
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.heart {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  pointer-events: none;
+  user-select: none;
+  image-rendering: pixelated;
+  z-index: 3;
+}
+
+.flame {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  pointer-events: none;
+  user-select: none;
+  image-rendering: pixelated;
+  z-index: 2;
+}
+
+.menu,
+.retryMenu {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  z-index: 10;
+}
+
+.menuButton,
+.retryButton {
+  background: white;
+  color: black;
+  border: 2px solid white;
+  font-size: 16px;
+  padding: 6px 20px;
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease;
+  border-radius: 4px;
+  user-select: none;
+}
+
+.menuButton:hover,
+.retryButton:hover {
+  background: black;
+  color: white;
+  border-color: white;
+}
+
+.retryText {
+  font-size: 32px;
+  color: red;
+  text-shadow: 2px 2px 0 black;
+  user-select: none;
+  pointer-events: none;
+}
+
+.countdownText {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 64px;
+  color: white;
+  text-shadow: 2px 2px 5px black;
+  pointer-events: none;
+  user-select: none;
+  z-index: 5;
+}
+
+.phraseBox {
+  text-align: center;
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+}
+
+.phrase {
+  font-size: 14px;
+  color: white;
+  font-family: monospace;
+  animation: fadeIn 0.6s ease;
+}
+
+.greenZone {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background-color: rgba(0, 255, 0, 0.2);
+  z-index: 1;
+}
+
+.redZone {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background-color: rgba(255, 0, 0, 0.2);
+  z-index: 1;
+  transition: background-color 0.3s ease;
+}
+
+.redZone.deadly {
+  background-color: rgba(255, 0, 0, 0.5);
+  box-shadow: 0 0 10px red;
+}
+
+.zoneCountdown {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 48px;
+  color: white;
+  text-shadow: 2px 2px 5px black;
+  pointer-events: none;
+  user-select: none;
+  z-index: 2;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
