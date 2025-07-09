@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./App.module.css";
 
-const FLAME_SIZE = 20;
+const FLAME_SIZE = 15;
 const HEART_SIZE = 20;
 const BOX_SIZE = 300;
+const MID_ATTACK_WIDTH = 64;
+const MID_ATTACK_HEIGHT = 64;
 
-// Aggiungi questo array di frasi del narratore
 const narratorLines = [
   "A strange light fills the room.",
   "Twilight is shining through the barrier.",
@@ -43,11 +44,22 @@ const App = () => {
   const [redZoneOnRight, setRedZoneOnRight] = useState(true);
   const [redZoneDeadly, setRedZoneDeadly] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
-  const [currentNarratorLine, setCurrentNarratorLine] = useState(0); 
+  const [currentNarratorLine, setCurrentNarratorLine] = useState(0);
+  const [midAttack, setMidAttack] = useState({
+    active: false,
+    x: -MID_ATTACK_WIDTH,
+    y: BOX_SIZE / 2 - MID_ATTACK_HEIGHT / 2,
+    speed: 2,
+    direction: 1
+  });
+  const [showAngryAsgore, setShowAngryAsgore] = useState(false);
+
   const intervalRef = useRef(null);
   const zoneIntervalRef = useRef(null);
   const zoneTimerRef = useRef(null);
   const narratorIntervalRef = useRef(null);
+  const midAttackIntervalRef = useRef(null);
+  const angryAsgoreTimeoutRef = useRef(null);
 
   const ostRef = useRef(null);
   const deathRef = useRef(null);
@@ -55,7 +67,6 @@ const App = () => {
   const attackRef = useRef(null);
   const videoRef = useRef(null);
 
-  // Aggiungi questo useEffect per gestire il cambio delle frasi del narratore
   useEffect(() => {
     if (!showVideo) return;
 
@@ -76,7 +87,6 @@ const App = () => {
     };
   }, [showVideo]);
 
-  // Music and sound effects
   useEffect(() => {
     if (!ostRef.current || !deathRef.current || !dangerRef.current || !attackRef.current) return;
 
@@ -114,7 +124,6 @@ const App = () => {
     }
   }, [gameState]);
 
-  // Initial loading
   useEffect(() => {
     if (gameState === "loading") {
       const timer = setTimeout(() => setGameState("menu"), 1500);
@@ -122,7 +131,6 @@ const App = () => {
     }
   }, [gameState]);
 
-  // Movement
   useEffect(() => {
     if (gameState !== "fight") return;
 
@@ -164,7 +172,6 @@ const App = () => {
           return { ...flame, x: newX, y: newY };
         });
 
-        // Check collision with flames
         for (let flame of newFlames) {
           if (
             flame.x < position.x + HEART_SIZE &&
@@ -177,7 +184,6 @@ const App = () => {
           }
         }
 
-        // Check collision with deadly red zone
         if (redZoneDeadly) {
           const inRedZone = redZoneOnRight 
             ? position.x > BOX_SIZE / 2 
@@ -190,6 +196,29 @@ const App = () => {
 
         return newFlames;
       });
+
+      if (midAttack.active) {
+        setMidAttack(prev => {
+          const newX = prev.x + prev.speed * prev.direction;
+          
+          if ((prev.direction === 1 && newX > BOX_SIZE) || 
+              (prev.direction === -1 && newX < -MID_ATTACK_WIDTH)) {
+            return { ...prev, active: false };
+          }
+          
+          if (
+            newX < position.x + HEART_SIZE &&
+            newX + MID_ATTACK_WIDTH > position.x &&
+            prev.y < position.y + HEART_SIZE &&
+            prev.y + MID_ATTACK_HEIGHT > position.y
+          ) {
+            setGameState("gameover");
+            return { ...prev, active: false };
+          }
+          
+          return { ...prev, x: newX };
+        });
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -201,9 +230,8 @@ const App = () => {
       window.removeEventListener("keyup", handleKeyUp);
       clearInterval(intervalRef.current);
     };
-  }, [gameState, position, redZoneDeadly, redZoneOnRight]);
+  }, [gameState, position, redZoneDeadly, redZoneOnRight, midAttack.active]);
 
-  // Countdown
   const startCountdown = () => {
     setCountdown(3);
     setGameState("countdown");
@@ -224,13 +252,14 @@ const App = () => {
     return () => clearTimeout(timeout);
   }, [countdown, gameState]);
 
-  // Zone system
   useEffect(() => {
     if (gameState !== "fight") {
       clearInterval(zoneIntervalRef.current);
       clearTimeout(zoneTimerRef.current);
+      clearTimeout(angryAsgoreTimeoutRef.current);
       setZoneActive(false);
       setRedZoneDeadly(false);
+      setShowAngryAsgore(false);
       if (dangerRef.current) {
         dangerRef.current.pause();
         dangerRef.current.currentTime = 0;
@@ -255,6 +284,13 @@ const App = () => {
 
       setTimeout(() => {
         setRedZoneDeadly(true);
+        setShowAngryAsgore(true);
+        
+        // Ripristina l'immagine normale dopo 500ms
+        angryAsgoreTimeoutRef.current = setTimeout(() => {
+          setShowAngryAsgore(false);
+        }, 500);
+        
         if (attackRef.current) {
           attackRef.current.currentTime = 0;
           attackRef.current.play().catch(e => console.log("Audio play error:", e));
@@ -264,6 +300,7 @@ const App = () => {
       zoneTimerRef.current = setTimeout(() => {
         setZoneActive(false);
         setRedZoneDeadly(false);
+        setShowAngryAsgore(false);
       }, 3500);
 
       const countdownInterval = setInterval(() => {
@@ -285,11 +322,39 @@ const App = () => {
     return () => {
       clearInterval(zoneIntervalRef.current);
       clearTimeout(zoneTimerRef.current);
+      clearTimeout(angryAsgoreTimeoutRef.current);
       clearTimeout(initialDelay);
     };
   }, [gameState]);
 
-  // Video handling
+  useEffect(() => {
+    if (gameState !== "fight") {
+      setMidAttack({ ...midAttack, active: false });
+      clearInterval(midAttackIntervalRef.current);
+      return;
+    }
+
+    const activateMidAttack = () => {
+      setMidAttack({
+        active: true,
+        x: Math.random() > 0.5 ? -MID_ATTACK_WIDTH : BOX_SIZE,
+        y: BOX_SIZE / 2 - MID_ATTACK_HEIGHT / 2,
+        speed: 2,
+        direction: Math.random() > 0.5 ? 1 : -1
+      });
+    };
+
+    const initialDelay = setTimeout(() => {
+      activateMidAttack();
+      midAttackIntervalRef.current = setInterval(activateMidAttack, 7000);
+    }, 7000);
+
+    return () => {
+      clearTimeout(initialDelay);
+      clearInterval(midAttackIntervalRef.current);
+    };
+  }, [gameState]);
+
   useEffect(() => {
     if (!showVideo) return;
 
@@ -304,6 +369,14 @@ const App = () => {
       setZoneActive(false);
       setRedZoneDeadly(false);
       setRedZoneOnRight(true);
+      setShowAngryAsgore(false);
+      setMidAttack({
+        active: false,
+        x: -MID_ATTACK_WIDTH,
+        y: BOX_SIZE / 2 - MID_ATTACK_HEIGHT / 2,
+        speed: 2,
+        direction: 1
+      });
       if (ostRef.current) {
         ostRef.current.currentTime = 0;
       }
@@ -335,7 +408,6 @@ const App = () => {
     };
   }, [showVideo]);
 
-  // Retry/reset
   const startFight = () => {
     if (deathRef.current) {
       deathRef.current.pause();
@@ -344,15 +416,20 @@ const App = () => {
     setShowVideo(true);
   };
 
+  const skipVideo = () => {
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.dispatchEvent(new Event('ended'));
+    }
+  };
+
   return (
     <div className={styles.container}>
-      {/* Audio elements */}
       <audio ref={ostRef} src="ost.mp3" />
       <audio ref={deathRef} src="death.mp3" />
       <audio ref={dangerRef} src="danger.mp3" />
       <audio ref={attackRef} src="attack.mp3" />
 
-      {/* Video element */}
       {showVideo && (
         <div className={styles.videoContainer}>
           <video
@@ -365,15 +442,16 @@ const App = () => {
           <div className={styles.videoTitle}>
             {narratorLines[currentNarratorLine]}
           </div>
+          <button onClick={skipVideo} className={styles.skipButton}>
+            Skip
+          </button>
         </div>
       )}
 
-      {/* Loading screen */}
       {gameState === "loading" && (
         <div className={styles.countdownText} style={{ userSelect: "none" }}></div>
       )}
 
-      {/* Menu screens */}
       {(gameState === "menu" || gameState === "gameover") && !showVideo && (
         <div className={gameState === "menu" ? styles.menu : styles.retryMenu}>
           {gameState === "gameover" && <div className={styles.retryText}>You cannot give up just yet...</div>}
@@ -382,17 +460,20 @@ const App = () => {
 
           <button onClick={startFight} className={styles.menuButton}>
             <img src="heart.png" alt="Heart" className={styles.menuHeart} />
-            Start
+            Determination
           </button>
 
           <div className={styles.controlsHint}>Use WASD keys to move</div>
         </div>
       )}
 
-      {/* Game screen */}
       {(gameState === "fight" || gameState === "countdown") && !showVideo && (
         <div className={styles.gameWrapper}>
-          <img src="asgore.gif" alt="Asgore" className={styles.asgore} />
+          <img 
+            src={showAngryAsgore ? "asgore-angry.gif" : "asgore.gif"} 
+            alt="Asgore" 
+            className={styles.asgore} 
+          />
           <div className={styles.box}>
             {zoneActive && (
               <>
@@ -432,6 +513,20 @@ const App = () => {
                 draggable={false}
               />
             ))}
+            {midAttack.active && (
+              <img
+                src="mid.png"
+                alt="Mid Attack"
+                className={styles.midAttack}
+                style={{
+                  top: midAttack.y,
+                  left: midAttack.x,
+                  width: `${MID_ATTACK_WIDTH}px`,
+                  height: `${MID_ATTACK_HEIGHT}px`
+                }}
+                draggable={false}
+              />
+            )}
             {gameState === "countdown" && (
               <div className={styles.countdownText}>
                 {countdown === 0 ? "" : countdown}
