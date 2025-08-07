@@ -2,7 +2,7 @@
 
 Un gioco di combattimento contro Asgore ispirato a Undertale, sviluppato in React. Rivivi l'epico scontro finale contro il Re dei Mostri nelle profondità del Monte Ebott.
 
-![Start Screen](../assets/game/start.png)
+<img src="./src/assets/game/start.png" alt="Start Screen" width="300">
 
 ## 📖 Storia
 
@@ -10,23 +10,23 @@ Asgore Dreemurr, Re dei Mostri, deve raccogliere sette anime umane per spezzare 
 
 ## 🎮 Gameplay
 
-![Asgore Normal](./assets/game/asgore.gif) ![Asgore Angry](./assets/game/asgore-angry.gif)
+<img src="./src/assets/game/asgore.gif" alt="Asgore Normal" width="200" autoplay loop> <img src="./src/assets/game/asgore-angry.gif" alt="Asgore Angry" width="200" autoplay loop>
 
 Sopravvivi agli attacchi di Asgore controllando il tuo cuore rosso:
 
-![Heart](./assets/game/heart.png) **Cuore del Giocatore** - Muoviti con WASD
+<img src="./src/assets/game/heart.png" alt="Heart" width="32"> **Cuore del Giocatore** - Muoviti con WASD
 
 ### Tipi di Attacco
 
-![Flames](./assets/game/flames.png) **Fiamme Arancioni**
+<img src="./src/assets/game/flames.png" alt="Flames" width="48"> **Fiamme Arancioni**
 - 4 pattern: orizzontale, verticale, diagonale, circolare
 - Le iconiche fiamme magiche di Asgore
 
-![Star](./assets/game/star.png) **Stelle Magiche** 
+<img src="./src/assets/game/star.png" alt="Star" width="48"> **Stelle Magiche** 
 - 3 formazioni: lineare, verticale, diagonale
 - Magia antica dei Boss Monsters
 
-![Mid Attack](./assets/game/mid.png) **Attacchi Medi**
+<img src="./src/assets/game/mid.png" alt="Mid Attack" width="48"> **Attacchi Medi**
 - Proiettili rapidi che attraversano lo schermo
 - Rappresentano l'esitazione di Asgore
 
@@ -41,8 +41,8 @@ Sopravvivi agli attacchi di Asgore controllando il tuo cuore rosso:
 
 ## 🎬 Video Intro
 
-- `start.mp4` - Sequenza narrativa introduttiva con le frasi:
-  - *"Una strana luce riempie la stanza."*
+- `start.mp4` - Sequenza narrativa introduttiva con le frasi:  
+  - *"Una strana luce riempie la stanza."*  
   - *"Sei pieno di DETERMINAZIONE."*
 
 ## 🎯 Meccaniche
@@ -60,16 +60,16 @@ Sopravvivi agli attacchi di Asgore controllando il tuo cuore rosso:
 
 ## 🚀 Installazione
 
-\`\`\`bash
+```bash
 git clone [repository-url]
 cd asgore-boss-fight
 npm install
 npm start
-\`\`\`
+```
 
 ## 📁 Struttura Assets
 
-\`\`\`
+```
 ./assets/game/
 ├── 🎵 Audio
 │   ├── ost.mp3
@@ -86,7 +86,7 @@ npm start
     ├── flames.png
     ├── star.png
     └── mid.png
-\`\`\`
+```
 
 ## 🏆 Obiettivo
 
@@ -97,3 +97,5 @@ Sopravvivi il più a lungo possibile! La difficoltà aumenta progressivamente ri
 *"Non puoi arrenderti proprio ora... Sei pieno di **DETERMINAZIONE**!"* ❤️
 
 **Un tributo a Toby Fox e al mondo di Undertale**
+```
+
