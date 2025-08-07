@@ -2,7 +2,7 @@
 
 Un gioco di combattimento contro Asgore ispirato a Undertale, sviluppato in React. Rivivi l'epico scontro finale contro il Re dei Mostri nelle profondità del Monte Ebott.
 
-![Start Screen](./assets/game/start.png)
+![Start Screen](../assets/game/start.png)
 
 ## 📖 Storia
 
